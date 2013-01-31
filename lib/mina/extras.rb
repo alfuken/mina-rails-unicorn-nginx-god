@@ -27,8 +27,9 @@ task :create_extra_paths do
   queue echo_cmd "mkdir -p #{config_path}"
 
   queue 'echo "-----> Create shared paths"'
-  shared_paths.each do |p|
-    queue echo_cmd "mkdir -p #{deploy_to}/#{shared_path}/#{p}"
+  shared_dirs = shared_paths.map { |file| File.dirname("#{deploy_to}/#{shared_path}/#{file}") }.uniq
+  cmds = shared_dirs.map do |dir|
+    queue echo_cmd %{mkdir -p "#{dir}"}
   end
 
   queue 'echo "-----> Create PID and Sockets paths"'
@@ -68,14 +69,14 @@ def check_ownership(u, g, destination)
   %{
     file_info=(`ls -l #{destination}`)
     if [[ -s "#{destination}" ]] && [[ ${file_info[2]} == '#{u}' ]] && [[ ${file_info[3]} == '#{g}' ]]; #{check_response}
-  }
+    }
 end
 
 def check_exec_and_ownership(u, g, destination)
   %{
     file_info=(`ls -l #{destination}`)
     if [[ -s "#{destination}" ]] && [[ -x "#{destination}" ]] && [[ ${file_info[2]} == '#{u}' ]] && [[ ${file_info[3]} == '#{g}' ]]; #{check_response}
-  }
+    }
 end
 
 def check_symlink(destination)
@@ -88,10 +89,10 @@ module Mina
     def ssh_command
       args = domain!
       args = if sudo? && sudoer?
-        "#{sudoer}@#{args}"
-      elsif user?
-        "#{user}@#{args}"
-      end
+               "#{sudoer}@#{args}"
+             elsif user?
+               "#{user}@#{args}"
+             end
       args << " -i #{identity_file}" if identity_file?
       args << " -p #{port}" if port?
       args << " -t"
