@@ -5,7 +5,7 @@
     <meta http-equiv="X-UA-Compatible" content="chrome=1">
     <title>Mina+Rails+Unicorn+Nginx+God by alfuken</title>
     <link rel="stylesheet" href="stylesheets/styles.css">
-    <link rel="stylesheet" href="stylesheets/pygment_trac.css">
+    <link rel="stylesheet" href="stylesheets/github-dark.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
     <script src="javascripts/respond.js"></script>
     <!--[if lt IE 9]>
@@ -35,10 +35,18 @@
           <p>An example deployment configuration using Mina for server running Rails app, Unicorn, nginx, and God.</p>
           <hr>
           <span class="credits left">Project maintained by <a href="https://github.com/alfuken">alfuken</a></span>
-          <span class="credits right">Hosted on GitHub Pages &mdash; Theme by <a href="http://twitter.com/#!/michigangraham">mattgraham</a></span>
+          <span class="credits right">Hosted on GitHub Pages &mdash; Theme by <a href="https://twitter.com/michigangraham">mattgraham</a></span>
         </div>
 
-        <h1>Mina + Rails + Unicorn + nginx + God</h1>
+        <h2>
+<a id="nb" class="anchor" href="#nb" aria-hidden="true"><span class="octicon octicon-link"></span></a>NB!</h2>
+
+<p>This code is <strong>highy outdated</strong> and is left here for reference only.
+Last update was in <strong>2012</strong>, lot of things has happened since.
+If you'd like to update it or take care of it - write me, and I'll transfer ownership to you.</p>
+
+<h1>
+<a id="mina--rails--unicorn--nginx--god" class="anchor" href="#mina--rails--unicorn--nginx--god" aria-hidden="true"><span class="octicon octicon-link"></span></a>Mina + Rails + Unicorn + nginx + God</h1>
 
 <h1></h1>
 
@@ -46,7 +54,8 @@
 
 <p>Deploys and updates Rails application and config files for <a href="http://unicorn.bogomips.org/">Unicorn</a>, <a href="http://wiki.nginx.org/Main">nginx</a>, and <a href="http://godrb.com/">God</a>.</p>
 
-<h2>Why?</h2>
+<h2>
+<a id="why" class="anchor" href="#why" aria-hidden="true"><span class="octicon octicon-link"></span></a>Why?</h2>
 
 <p>When I've started using Mina for deployment, these examples were what I needed most.</p>
 
@@ -56,7 +65,8 @@
 
 <p>So I thought, why not share? I hope it can be useful for somebody, so that one can see, learn, understand, and use.</p>
 
-<h2>How?</h2>
+<h2>
+<a id="how" class="anchor" href="#how" aria-hidden="true"><span class="octicon octicon-link"></span></a>How?</h2>
 
 <p>This example assumes the following:</p>
 
@@ -66,54 +76,53 @@
 <li>this user have sudo privileges OR you have a separate user that have sudo privileges. You'll need sudoer for setup_extras and config:link tasks. If you don't have separate sudoer, script will assume that deployer have all the necessary sudo rights. If you know workaround, please, let me know about it!</li>
 <li>you already installed and configured git, rvm (global installation preferred) and nginx, at least</li>
 <li>probably something else I forgot at the moment. Don't expect flawless deploy from scratch anyway</li>
-</ul><p>Example deployment to local vagrant virtual machine:</p>
+</ul>
 
-<div class="highlight"><pre><span class="c"># copy config/deploy.rb to $YOUR_APP/config/deploy.rb</span>
-<span class="c"># copy lib/mina to $YOUR_APP/lib</span>
-<span class="c"># edit common settings and anything you like in config/deploy.rb</span>
-<span class="c"># edit lib/mina/servers/*.rb to match your server configuration</span>
+<p>Example deployment to local vagrant virtual machine:</p>
+
+<div class="highlight highlight-bash"><pre><span class="pl-c"># copy config/deploy.rb to $YOUR_APP/config/deploy.rb</span>
+<span class="pl-c"># copy lib/mina to $YOUR_APP/lib</span>
+<span class="pl-c"># edit common settings and anything you like in config/deploy.rb</span>
+<span class="pl-c"># edit lib/mina/servers/*.rb to match your server configuration</span>
 mina init
-mina setup          <span class="c"># Set up deploy server with paths, configs, etc. Requires sudo privileges or sudoer user</span>
+mina setup          <span class="pl-c"># Set up deploy server with paths, configs, etc. Requires sudo privileges or sudoer user</span>
 mina deploy
-mina nginx:restart  <span class="c"># or nginx:start</span>
-mina god:start      <span class="c"># it will also run unicorn automagically</span>
-</pre></div>
+mina nginx:restart  <span class="pl-c"># or nginx:start</span>
+mina god:start      <span class="pl-c"># it will also run unicorn automagically</span></pre></div>
 
 <p>You should be up and running now. Yay!</p>
 
 <p>All tasks by default will run for :default_server, which is :vagrant in this example. See config/deploy.rb lines 22 and 28-29
 When you'll need to run the same for production, add <code>to=server_config_name</code>, like this:</p>
 
-<div class="highlight"><pre>mina init <span class="nv">to</span><span class="o">=</span>production
-mina setup <span class="nv">to</span><span class="o">=</span>production
-mina deploy <span class="nv">to</span><span class="o">=</span>production
-mina nginx:restart <span class="nv">to</span><span class="o">=</span>production
-mina god:start <span class="nv">to</span><span class="o">=</span>production
-</pre></div>
+<div class="highlight highlight-bash"><pre>mina init to=production
+mina setup to=production
+mina deploy to=production
+mina nginx:restart to=production
+mina god:start to=production</pre></div>
 
 <p><code>mina deploy to=production</code> sounds just right. :) Thanks <a href="http://github.com/rstacruz">@rstacruz</a> for the hint!
 You can, of course, set the :default_server to anything you like.</p>
 
 <p><code>setup</code> task also invokes these additional tasks:</p>
 
-<div class="highlight"><pre>create_extra_paths
+<div class="highlight highlight-bash"><pre>create_extra_paths
 god:setup
 god:upload
 unicorn:upload
-nginx:upload
-</pre></div>
+nginx:upload</pre></div>
 
 <p>and if you don't set separate sudoer user, these tasks invoked as well, implying that current user have sudo rights (if he doesn't, you'll be prompted to run 'sudo_setup' task, which does exactly that):</p>
 
-<div class="highlight"><pre>god:link
+<div class="highlight highlight-bash"><pre>god:link
 unicorn:link
 nginx:setup
-nginx:link
-</pre></div>
+nginx:link</pre></div>
 
 <p>You can, of course, run them one by one. And you will eventually do so, if you find yourself in need of modifying some config files.</p>
 
-<h2>What now?</h2>
+<h2>
+<a id="what-now" class="anchor" href="#what-now" aria-hidden="true"><span class="octicon octicon-link"></span></a>What now?</h2>
 
 <p>You can check God status:</p>
 
@@ -144,12 +153,14 @@ nginx:link
 
 <p>Just check out task files under lib/mina directory, most of the code there is quite self-explanatory!</p>
 
-<h2>Man, this code sucks!</h2>
+<h2>
+<a id="man-this-code-sucks" class="anchor" href="#man-this-code-sucks" aria-hidden="true"><span class="octicon octicon-link"></span></a>Man, this code sucks!</h2>
 
 <p>Probably. But it is the code I'm currently using for production deployment, and if you think you can improve
 it or just have a better idea regarding anything described here - send me an email or pull request.</p>
 
-<h2>Me</h2>
+<h2>
+<a id="me" class="anchor" href="#me" aria-hidden="true"><span class="octicon octicon-link"></span></a>Me</h2>
 
 <ul>
 <li><a href="http://alfuken.tumblr.com/">Blog</a></li>
