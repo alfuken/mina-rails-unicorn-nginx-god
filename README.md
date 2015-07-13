@@ -1,3 +1,10 @@
+NB!
+---
+
+This code is **highy outdated** and is left here for reference only.
+Last update was in **2012**, lot of things has happened since.
+If you'd like to update it or take care of it - write me, and I'll transfer ownership to you.
+
 # Mina + Rails + Unicorn + nginx + God
 ======================================
 
